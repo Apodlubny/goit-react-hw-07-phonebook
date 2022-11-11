@@ -4,11 +4,12 @@ import {
   FilterLabel,
 } from 'components/Filter/Filter.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateFilter, getContactsData } from 'redux/contactsSlice';
+import { updateFilter } from 'redux/filterSlice';
+import { selectStatusFilter } from 'redux/selectors';
 
 export const Filter = () => {
   const dispatch = useDispatch();
-  const { filter } = useSelector(getContactsData);
+  const filter = useSelector(selectStatusFilter);
 
   const onFilterChange = e => {
     dispatch(updateFilter(e.currentTarget.value));

@@ -8,8 +8,8 @@ import {
   Error,
 } from 'components/ContactForm/ContactForm.styled';
 import { useSelector, useDispatch } from 'react-redux';
-import { addContact, getContactsData } from 'redux/contactsSlice';
-import { nanoid } from 'nanoid';
+import { addContact } from 'redux/operations';
+import { selectContacts } from 'redux/selectors';
 
 const schema = yup.object().shape({
   name: yup
@@ -37,27 +37,22 @@ const initialValues = {
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
-  const { contactsList } = useSelector(getContactsData);
+  const items = useSelector(selectContacts);
 
   const handleSubmit = (values, { resetForm }) => {
-    const { name, number } = values;
+    const dublicateContact = findDublicateContact(values, items);
 
-    const contact = {
-      name,
-      number,
-    };
-
-    const dublicateContact = findDublicateContact(contact, contactsList);
     if (dublicateContact) {
-      alert(`${contact.name} is already in contacts`);
+      alert(`${values.name} is already in contacts`);
     } else {
-      dispatch(addContact({ ...values, id: nanoid() }));
+      dispatch(addContact(values));
+
       resetForm();
     }
   };
 
-  const findDublicateContact = (contact, contactsList) => {
-    return contactsList.find(
+  const findDublicateContact = (contact, items) => {
+    return items.find(
       item => item.name.toLowerCase() === contact.name.toLowerCase()
     );
   };

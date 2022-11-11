@@ -5,32 +5,43 @@ import {
   ContactItemText,
   ContactItemButton,
 } from 'components/ContactList/ContactList.styled';
-
 import { useSelector, useDispatch } from 'react-redux';
-import { getContactsData, deleteContact } from 'redux/contactsSlice';
+
+import { deleteContact } from 'redux/operations';
+import { selectContacts, selectStatusFilter } from 'redux/selectors';
 
 export const ContactList = () => {
   const dispatch = useDispatch();
-  const { contactsList, filter } = useSelector(getContactsData);
-  const getFilteredContact = () => {
+  const items = useSelector(selectContacts);
+  const filter = useSelector(selectStatusFilter);
+
+  const getNeeddedCard = () => {
     const normalizedFilter = filter.toLowerCase();
 
-    return contactsList.filter(contact =>
+    return items.filter(contact =>
       contact.name.toLowerCase().includes(normalizedFilter)
     );
   };
+
   const deleteCard = contactId => {
     dispatch(deleteContact(contactId));
   };
-  const filteredContacts = getFilteredContact();
+
+  const neededCards = getNeeddedCard();
+
   return (
     <ContactListEl>
-      {filteredContacts.map(({ name, number, id }) => {
+      {neededCards.map(({ name, phone, id }) => {
         return (
           <ContactListItem key={id}>
             <ContactItemHeader>{name}</ContactItemHeader>
-            <ContactItemText>{number}</ContactItemText>
-            <ContactItemButton type="button" onClick={() => deleteCard(id)}>
+            <ContactItemText>{phone}</ContactItemText>
+            <ContactItemButton
+              type="button"
+              onClick={() => {
+                deleteCard(id);
+              }}
+            >
               Delete
             </ContactItemButton>
           </ContactListItem>
